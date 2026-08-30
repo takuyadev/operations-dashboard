@@ -1,0 +1,71 @@
+/* Priority and status tags — the Mimamori design system's PriorityBadge shape:
+   tone-tinted fill, 2px solid border in the tone color, radius-md, always an
+   icon or dot plus the word (never color alone). */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 2px solid currentColor;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-left: -2px;
+}
+
+.text {
+  color: inherit;
+}
+
+/* ---- Priority ------------------------------------------------------------- */
+.high {
+  color: var(--priority-critical-fg);
+  background-color: var(--priority-critical-bg);
+}
+.medium {
+  color: var(--priority-warning-fg);
+  background-color: var(--priority-warning-bg);
+}
+.low {
+  color: var(--priority-info-fg);
+  background-color: var(--priority-info-bg);
+}
+
+/* ---- Status ------------------------------------------------------------- */
+.unresolved {
+  color: var(--priority-critical-fg);
+  background-color: var(--priority-critical-bg);
+}
+.dispatched {
+  color: var(--priority-assign-fg);
+  background-color: var(--priority-assign-bg);
+}
+.resolved {
+  color: var(--priority-resolved-fg);
+  background-color: var(--priority-resolved-bg);
+}
+
+/* Larger variant for the detail-page header. */
+.lg {
+  min-height: 44px;
+  font-size: var(--text-sm);
+  padding: 0 var(--space-4);
+}

@@ -1,13 +1,14 @@
+import { fileURLToPath, URL } from "node:url";
+
 import { reactRouter } from "@react-router/dev/vite";
-import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
- 	server: {
-		host: "0.0.0.0",
-		strictPort: true
+  server: {
+    host: "0.0.0.0",
+    strictPort: true,
   },
-  plugins: [tailwindcss(), reactRouter()],
+  plugins: [reactRouter()],
   resolve: {
     tsconfigPaths: true,
   },

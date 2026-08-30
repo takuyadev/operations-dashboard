@@ -1,0 +1,11 @@
+:root{
+/* deliberate, non-bouncy motion — no overshoot, nothing that reads as playful in a safety context */
+--ease-standard:cubic-bezier(0.2,0,0,1); /* @kind other */
+--ease-out:cubic-bezier(0,0,0,1); /* @kind other */
+--duration-fast:120ms; /* @kind other */
+--duration-base:220ms; /* @kind other */
+--duration-slow:360ms; /* @kind other */
+--pulse-duration:1600ms; /* @kind other */
+}
+@keyframes ds-pulse-critical{0%,100%{box-shadow:var(--glow-critical)}50%{box-shadow:0 0 0 4px oklch(62% 0.22 23 / 0.12),0 0 12px oklch(62% 0.22 23 / 0.15)}}
+@keyframes ds-fade-in{from{opacity:0}to{opacity:1}}

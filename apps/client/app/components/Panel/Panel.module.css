@@ -1,0 +1,52 @@
+/* A labeled instrument module. Defined by a heavy border, not shadow, so the
+   canvas reads as discrete panels bolted to a desk. */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: var(--surface-card);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border);
+  background-color: var(--surface-sunken);
+}
+
+.headingGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.heading {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.01em;
+}
+
+.eyebrow {
+  /* extends global .label */
+  color: var(--fg-tertiary);
+}
+
+.action {
+  flex-shrink: 0;
+}
+
+.body {
+  padding: var(--space-5);
+}
+
+.bodyFlush {
+  padding: 0;
+}

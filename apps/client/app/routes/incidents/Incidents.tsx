@@ -1,12 +1,16 @@
 import type { Route } from "./+types/Incidents";
+import Issues from "@components/Issues/Issues";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Incidents" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "History · Road Operations" },
+    {
+      name: "description",
+      content: "Searchable, filterable history of every logged road incident.",
+    },
   ];
 }
 
 export default function Incidents() {
-  return <div>Incidents</div>;
+  return <Issues />;
 }

@@ -1,0 +1,27 @@
+/* =============================================================================
+   App composition tokens
+   -----------------------------------------------------------------------------
+   Layout dimensions and shorthand helpers the product needs that the Mimamori
+   design system (tokens/*.css) does not ship. Every value here is expressed in
+   design-system tokens — no raw colors, sizes, or timings.
+   ========================================================================== */
+
+:root {
+  /* Shell / layout geometry */
+  --rail-w: 220px;              /* matches the design system's ops-dashboard Sidebar */
+  --content-max: 1600px;
+  --aside-w: 340px;
+  --aside-w-wide: 380px;
+
+  /* Border shorthands — the design system defines border colors, not compound
+     `border` values. 1px subtle for internal dividers, 1px strong for the
+     outer edge of a surface. */
+  --border: 1px solid var(--border-strong);
+  --border-soft: 1px solid var(--border-subtle);
+
+  /* Panel corner — the design system's Card radius. */
+  --panel-radius: var(--radius-lg);
+
+  /* Uppercase equipment-label tracking (Latin UI copy only; CJK never tracked). */
+  --label-tracking: 0.04em;
+}

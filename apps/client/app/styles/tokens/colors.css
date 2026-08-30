@@ -1,0 +1,125 @@
+:root{
+/* neutrals — warm-dark control-room surface, avoids blue-heavy glare over long shifts */
+--gray-950:oklch(15% 0.006 264);
+--gray-900:oklch(19% 0.006 264);
+--gray-850:oklch(22% 0.006 264);
+--gray-800:oklch(26% 0.007 264);
+--gray-700:oklch(34% 0.007 264);
+--gray-600:oklch(46% 0.007 264);
+--gray-500:oklch(58% 0.007 264);
+--gray-400:oklch(68% 0.006 264);
+--gray-300:oklch(80% 0.005 264);
+--gray-100:oklch(93% 0.003 264);
+--gray-50:oklch(98% 0.001 264);
+
+/* brand — calm vigilance blue-teal; kept distinct from all alert colors so it never reads as "warning" */
+--brand-700:oklch(46% 0.09 217);
+--brand-600:oklch(55% 0.10 217);
+--brand-500:oklch(64% 0.11 217);
+--brand-400:oklch(74% 0.10 217);
+--brand-300:oklch(85% 0.06 217);
+
+/* priority semantics — each pairs with an icon + Japanese word, never color alone */
+--critical-700:oklch(45% 0.19 23);
+--critical-600:oklch(54% 0.21 23);
+--critical-500:oklch(62% 0.22 23);
+--critical-400:oklch(74% 0.17 25);
+--critical-100:oklch(93% 0.05 23);
+
+--warning-600:oklch(62% 0.15 62);
+--warning-500:oklch(70% 0.16 64);
+--warning-400:oklch(80% 0.14 68);
+--warning-100:oklch(94% 0.05 70);
+
+--info-600:oklch(56% 0.13 241);
+--info-500:oklch(64% 0.13 241);
+--info-400:oklch(76% 0.10 241);
+--info-100:oklch(93% 0.03 241);
+
+--success-600:oklch(52% 0.13 152);
+--success-500:oklch(62% 0.14 152);
+--success-400:oklch(74% 0.13 152);
+--success-100:oklch(92% 0.05 152);
+
+/* semantic aliases — dark theme (default) */
+--surface-page:var(--gray-950);
+--surface-sunken:var(--gray-900);
+--surface-card:var(--gray-850);
+--surface-card-raised:var(--gray-800);
+--surface-overlay:oklch(15% 0.006 264 / 0.72);
+--border-subtle:var(--gray-700);
+--border-strong:var(--gray-600);
+--border-focus:var(--brand-400);
+
+--fg-primary:var(--gray-50);
+--fg-secondary:var(--gray-300);
+--fg-tertiary:var(--gray-400);
+--fg-on-brand:var(--gray-950);
+--fg-on-critical:oklch(99% 0 0);
+--fg-link:var(--brand-400);
+--fg-link-hover:var(--brand-300);
+
+--action-primary:var(--brand-500);
+--action-primary-hover:var(--brand-400);
+--action-primary-active:var(--brand-600);
+--action-danger:var(--critical-600);
+--action-danger-hover:var(--critical-500);
+
+--priority-critical:var(--critical-500);
+--priority-critical-bg:oklch(28% 0.07 23);
+--priority-warning:var(--warning-500);
+--priority-warning-bg:oklch(28% 0.055 64);
+--priority-info:var(--info-500);
+--priority-info-bg:oklch(26% 0.045 241);
+--priority-resolved:var(--success-500);
+--priority-resolved-bg:oklch(26% 0.045 152);
+
+--priority-critical-fg:var(--critical-400);
+--priority-warning-fg:var(--warning-400);
+--priority-info-fg:var(--info-400);
+--priority-resolved-fg:var(--success-400);
+--priority-assign-fg:var(--brand-300);
+--priority-assign-bg:oklch(30% 0.05 217);
+}
+
+/* light theme — apply data-theme="light" to <html> (global) or any container (scoped demo) */
+[data-theme="light"]{
+--surface-page:oklch(97% 0.002 264);
+--surface-sunken:oklch(94% 0.003 264);
+--surface-card:oklch(99.5% 0.001 264);
+--surface-card-raised:oklch(100% 0 0);
+--surface-overlay:oklch(20% 0.01 264 / 0.45);
+--border-subtle:oklch(87% 0.004 264);
+--border-strong:oklch(74% 0.005 264);
+--border-focus:var(--brand-600);
+
+--fg-primary:oklch(22% 0.01 264);
+--fg-secondary:oklch(40% 0.008 264);
+--fg-tertiary:oklch(54% 0.007 264);
+--fg-on-brand:var(--gray-50);
+--fg-on-critical:oklch(99% 0 0);
+--fg-link:var(--brand-600);
+--fg-link-hover:var(--brand-700);
+
+--action-primary:var(--brand-600);
+--action-primary-hover:var(--brand-700);
+--action-primary-active:var(--brand-700);
+--action-danger:var(--critical-600);
+--action-danger-hover:var(--critical-700);
+
+--priority-critical:var(--critical-600);
+--priority-critical-bg:var(--critical-100);
+--priority-warning:var(--warning-600);
+--priority-warning-bg:var(--warning-100);
+--priority-info:var(--info-600);
+--priority-info-bg:var(--info-100);
+--priority-resolved:var(--success-600);
+--priority-resolved-bg:var(--success-100);
+
+--priority-critical-fg:var(--critical-600);
+--priority-warning-fg:var(--warning-600);
+--priority-info-fg:var(--info-600);
+--priority-resolved-fg:var(--success-600);
+--priority-assign-fg:var(--brand-700);
+--priority-assign-bg:var(--brand-300);
+}

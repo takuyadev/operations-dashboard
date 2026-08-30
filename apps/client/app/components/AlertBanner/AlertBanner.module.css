@@ -1,0 +1,81 @@
+/* Focused-attention mode. When a critical incident is live this is the single
+   loudest thing on screen: one incident, two actions, readable across the
+   room. Everything the operator needs inside the ~67s focused-attention
+   window the brief calls out. */
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  background-color: var(--priority-critical-bg);
+  border: 2px solid var(--critical-600);
+  border-radius: var(--radius-lg);
+  animation: ds-pulse-critical var(--pulse-duration) var(--ease-standard) infinite;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--critical-400);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kicker {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.label {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--priority-critical-fg);
+}
+
+.id {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--priority-critical-fg);
+}
+
+.headline {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--fg-primary);
+}
+
+.location {
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+}
+
+.actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .banner {
+    flex-wrap: wrap;
+  }
+  .actions {
+    width: 100%;
+  }
+  .actions > * {
+    flex: 1;
+  }
+}

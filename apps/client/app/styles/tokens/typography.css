@@ -1,0 +1,26 @@
+:root{
+--font-ui:'Noto Sans JP','Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
+--font-mono:'JetBrains Mono','Noto Sans JP',monospace;
+
+/* 16px is the hard floor per brief — nothing in the system goes smaller */
+--text-xs:16px;
+--text-sm:18px;
+--text-base:20px;
+--text-md:24px;
+--text-lg:28px;
+--text-xl:36px;
+--text-2xl:48px;
+--text-3xl:64px;
+
+--leading-tight:1.35;
+--leading-normal:1.6;
+--leading-relaxed:1.8;
+
+--weight-regular:400;
+--weight-medium:500;
+--weight-bold:700;
+--weight-black:900;
+
+--tracking-normal:0;
+--tracking-wide:0.01em;
+}

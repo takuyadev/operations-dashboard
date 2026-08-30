@@ -1,0 +1,49 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  border: var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--surface-card);
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border);
+  background-color: var(--surface-sunken);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.status {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-tertiary);
+}
+
+/* Placeholder surface: a hatched field, so it reads as "feed not wired yet"
+   rather than a broken image. */
+.placeholder {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-tertiary);
+  font-size: var(--text-xs);
+  background-color: var(--surface-sunken);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 10px,
+    var(--surface-card-raised) 10px 20px
+  );
+}

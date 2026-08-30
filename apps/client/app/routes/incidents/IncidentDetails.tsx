@@ -1,12 +1,13 @@
-import type { Route } from "./+types/IncidentsDetails";
+import type { Route } from "./+types/IncidentDetails";
+import IssuesDetails from "@components/IssuesDetails/IssuesDetails";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ params }: Route.MetaArgs) {
   return [
-    { title: "Incidents Details" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: `Incident #${params.id} · Road Operations` },
+    { name: "description", content: `Assessment and response for incident #${params.id}.` },
   ];
 }
 
-export default function IncidentsDetails() {
-  return <div>Incidents Details</div>;
+export default function IncidentDetails({ params }: Route.ComponentProps) {
+  return <IssuesDetails id={params.id} />;
 }

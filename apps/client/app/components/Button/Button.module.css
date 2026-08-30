@@ -1,0 +1,87 @@
+/* Follows the Mimamori design system's Button: a flat fill, 2px border, and a
+   calm scale(0.97) press — no bouncy easing, no load-bearing shadow. Colors
+   carry meaning: primary/dispatch use the brand action color, resolve uses the
+   resolved/success color, danger uses the danger action color. Same color
+   wherever the action appears, so the operator never re-reads it. */
+
+.btn {
+  --_fill: var(--action-primary);
+  --_ink: var(--fg-on-brand);
+  --_border: transparent;
+  --_hover: var(--action-primary-hover);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  min-height: var(--hit-target-min);
+  padding: 0 var(--space-6);
+  border: 2px solid var(--_border);
+  border-radius: var(--radius-md);
+
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+
+  background-color: var(--_fill);
+  color: var(--_ink);
+  transition: background-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.btn:hover {
+  background-color: var(--_hover);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---- Sizes ------------------------------------------------------------- */
+.lg {
+  min-height: var(--hit-target-comfortable);
+  padding: 0 var(--space-8);
+  font-size: var(--text-base);
+}
+
+.block {
+  display: flex;
+  width: 100%;
+}
+
+/* ---- Variants -------------------------------------------------------- */
+.primary,
+.dispatch {
+  --_fill: var(--action-primary);
+  --_ink: var(--fg-on-brand);
+  --_hover: var(--action-primary-hover);
+}
+
+.resolve {
+  --_fill: var(--priority-resolved);
+  --_ink: var(--fg-on-critical);
+  --_hover: var(--success-400);
+}
+
+.danger {
+  --_fill: var(--action-danger);
+  --_ink: var(--fg-on-critical);
+  --_hover: var(--action-danger-hover);
+}
+
+.ghost {
+  --_fill: transparent;
+  --_ink: var(--fg-secondary);
+  --_border: var(--border-strong);
+  --_hover: var(--surface-card-raised);
+}

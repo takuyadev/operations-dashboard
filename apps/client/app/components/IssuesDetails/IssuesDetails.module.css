@@ -1,0 +1,86 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--aside-w-wide);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.tags {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.assignee {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+}
+
+.assignee strong {
+  color: var(--fg-primary);
+  font-weight: var(--weight-bold);
+}
+
+.description {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fg-primary);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.actions > * {
+  flex: 1;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-strong);
+  border: none;
+}
+
+.activityHeading {
+  /* extends global .label */
+  color: var(--fg-secondary);
+}
+
+.aside {
+  position: sticky;
+  top: var(--space-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.notFound {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+@media (max-width: 1180px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .aside {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .actions {
+    flex-direction: column;
+  }
+}
