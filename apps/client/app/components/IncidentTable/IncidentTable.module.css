@@ -23,7 +23,7 @@
   white-space: nowrap;
 }
 
-.colStatus {
+.colLead {
   width: 1%;
 }
 .colPriority {
@@ -74,12 +74,43 @@
   vertical-align: middle;
 }
 
-.cellStatus {
+.cellLead {
   padding-left: var(--space-5);
 }
 
+/* Assignee column: the operator a row is assigned to. The current operator's
+   own name is drawn in the brand colour to stand out from other operators. */
+.assignee {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.assigneeMine {
+  color: var(--fg-link);
+}
+
+.assigneeNone {
+  font-weight: var(--weight-regular);
+  color: var(--fg-tertiary);
+}
+
 .incidentCell {
-  min-width: 22ch;
+  min-width: 24ch;
+}
+
+.incidentRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.incidentText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .summary {

@@ -1,0 +1,28 @@
+/* Compact status marker shown inline before an incident title. Icon-only,
+   tone-coloured — resolved reads as a green checkmark. */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.unresolved {
+  color: var(--priority-critical-fg);
+  background-color: var(--priority-critical-bg);
+}
+
+.dispatched {
+  color: var(--priority-assign-fg);
+  background-color: var(--priority-assign-bg);
+}
+
+.resolved {
+  color: var(--priority-resolved-fg);
+  background-color: var(--priority-resolved-bg);
+}

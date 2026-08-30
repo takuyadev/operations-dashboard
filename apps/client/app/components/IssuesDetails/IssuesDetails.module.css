@@ -20,13 +20,36 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  flex-wrap: wrap;
+  row-gap: var(--space-3);
+}
+
+.assigneeText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.assigneeLabel {
   font-size: var(--text-xs);
   color: var(--fg-secondary);
 }
 
-.assignee strong {
+.assigneeLabel strong {
   color: var(--fg-primary);
   font-weight: var(--weight-bold);
+}
+
+.assigneeTitle {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  color: var(--fg-primary);
+  line-height: var(--leading-tight);
+}
+
+.assignForm {
+  margin-left: auto;
 }
 
 .description {
@@ -35,10 +58,15 @@
   color: var(--fg-primary);
 }
 
-.responseForm {
+.messageForm {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
+}
+
+.messageActions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .error {

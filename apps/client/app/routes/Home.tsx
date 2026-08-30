@@ -8,7 +8,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "Live road-incident monitoring: unresolved reports, your queue, and latest activity.",
+        "Live road-incident monitoring: the unresolved queue and latest activity.",
     },
   ];
 }
@@ -20,9 +20,6 @@ export async function loader() {
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   return (
-    <Dashboard
-      initialIncidents={loaderData.incidents}
-      wsUrl={loaderData.wsUrl}
-    />
+    <Dashboard initialIncidents={loaderData.incidents} wsUrl={loaderData.wsUrl} />
   );
 }

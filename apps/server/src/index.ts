@@ -20,7 +20,7 @@ app.get("/", (_req, res) => {
     websocket: "/ws",
     endpoints: {
       "GET /api/health": "liveness + database check",
-      "GET /api/incidents": "list incidents (?status= ?priority= ?assignedToMe=true)",
+      "GET /api/incidents": "list incidents (?status= ?priority= ?assignedToMe=true ?assignee=)",
       "POST /api/incidents": "create incident (emits incident:created over /ws)",
       "GET /api/incidents/:id": "one incident with its activity",
       "PATCH /api/incidents/:id": "update incident",

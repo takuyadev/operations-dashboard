@@ -22,7 +22,7 @@ const isMissingRecord = (err: unknown): boolean =>
 /* ---- GET /api/incidents --------------------------------------------------- */
 // Optional filters: ?status= &priority= &assignedToMe=true
 incidentsRouter.get("/", async (req, res) => {
-  const { status, priority, assignedToMe } = req.query;
+  const { status, priority, assignedToMe, assignee } = req.query;
   const where: Prisma.IncidentWhereInput = {};
 
   if (typeof status === "string") {
@@ -36,6 +36,8 @@ incidentsRouter.get("/", async (req, res) => {
     where.priority = priority as Priority;
   }
   if (assignedToMe === "true") where.assignedToMe = true;
+  if (typeof assignee === "string" && assignee.trim() !== "")
+    where.assignee = assignee.trim();
 
   const incidents = await prisma.incident.findMany({
     where,

@@ -9,6 +9,7 @@ import type {
   Incident,
   IncidentStatus,
 } from "../data/incidents";
+import { CURRENT_USER_ID } from "./user";
 
 /** An incident plus its activity trail, as returned by `GET /api/incidents/:id`. */
 export type IncidentDetail = Incident & { activity: ActivityEvent[] };
@@ -21,6 +22,17 @@ export const PUBLIC_WS_URL =
 
 export async function listIncidents(): Promise<Incident[]> {
   const res = await fetch(`${API_URL}/api/incidents`);
+  if (!res.ok) {
+    throw new Response(`Incident API responded ${res.status}`, { status: 502 });
+  }
+  return (await res.json()) as Incident[];
+}
+
+/** Incidents whose `assignee` matches the given user id. `GET /api/incidents?assignee=`. */
+export async function listAssignedIncidents(userId: string): Promise<Incident[]> {
+  const res = await fetch(
+    `${API_URL}/api/incidents?assignee=${encodeURIComponent(userId)}`,
+  );
   if (!res.ok) {
     throw new Response(`Incident API responded ${res.status}`, { status: 502 });
   }
@@ -112,20 +124,32 @@ const DRAFTS = [
 
 const PRIORITIES = ["high", "medium", "low"] as const;
 
-function randomDraft() {
+function randomDraft(overrides: Record<string, unknown> = {}) {
   const base = DRAFTS[Math.floor(Math.random() * DRAFTS.length)];
   const priority = PRIORITIES[Math.floor(Math.random() * PRIORITIES.length)];
-  return { ...base, priority, assignedToMe: Math.random() < 0.5 };
+  return { ...base, priority, assignedToMe: Math.random() < 0.5, ...overrides };
 }
 
-export async function createSimulatedIncident(): Promise<Incident> {
+async function postDraft(draft: unknown): Promise<Incident> {
   const res = await fetch(`${API_URL}/api/incidents`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify(randomDraft()),
+    body: JSON.stringify(draft),
   });
   if (!res.ok) {
     throw new Response(`Incident API responded ${res.status}`, { status: 502 });
   }
   return (await res.json()) as Incident;
+}
+
+/** Create a random unassigned incident. */
+export async function createSimulatedIncident(): Promise<Incident> {
+  return postDraft(randomDraft());
+}
+
+/** Create a random incident pre-assigned to the current operator. */
+export async function createAssignedIncident(): Promise<Incident> {
+  return postDraft(
+    randomDraft({ assignee: CURRENT_USER_ID, assignedToMe: true }),
+  );
 }

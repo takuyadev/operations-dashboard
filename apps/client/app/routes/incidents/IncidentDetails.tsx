@@ -5,6 +5,7 @@ import {
   getIncident,
   updateIncident,
 } from "../../lib/api.server";
+import { CURRENT_USER_ID } from "../../lib/user";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -22,43 +23,70 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 const RESPONSES = {
-  dispatch: { status: "dispatched", kind: "dispatch" },
-  resolve: { status: "resolved", kind: "resolve" },
+  dispatch: {
+    status: "dispatched",
+    kind: "dispatch",
+    message: (label: string) => `Dispatch team notified for incident ${label}`,
+  },
+  resolve: {
+    status: "resolved",
+    kind: "resolve",
+    message: (label: string) => `Incident ${label} marked resolved`,
+  },
 } as const;
 
 /**
- * Records the operator's response. Writes the status change and an activity
- * entry (carrying the dispatch note) to the API; the route loader then
- * revalidates so the page shows the server's version.
+ * Records an operator action. Each `intent` is independent:
+ *  - `message`  → appends a free-text entry to the incident log (no status change)
+ *  - `dispatch` → status = dispatched (+ log entry)
+ *  - `resolve`  → status = resolved (+ log entry)
+ *  - `assign`   → assigns the incident to the current operator (+ log entry)
+ * The route loader revalidates after each, so the page shows the server's version.
  */
 export async function action({ request, params }: Route.ActionArgs) {
   const form = await request.formData();
   const intent = String(form.get("intent") ?? "");
-  const note = String(form.get("note") ?? "").trim();
-
-  if (intent !== "dispatch" && intent !== "resolve") {
-    return { ok: false as const, error: "Unknown action." };
-  }
-
-  const plan = RESPONSES[intent];
+  const message = String(form.get("message") ?? "").trim();
   const label = `#${params.id}`;
-  const message =
-    intent === "dispatch"
-      ? note
-        ? `Dispatch team notified for incident ${label}: “${note}”`
-        : `Dispatch team notified for incident ${label}`
-      : note
-        ? `Incident ${label} marked resolved: “${note}”`
-        : `Incident ${label} marked resolved`;
 
   try {
-    await updateIncident(params.id, { status: plan.status });
-    await addIncidentActivity(params.id, {
-      kind: plan.kind,
-      message,
-      time: "just now",
-    });
-    return { ok: true as const, intent };
+    if (intent === "message") {
+      if (!message) {
+        return { ok: false as const, error: "The message can't be empty." };
+      }
+      await addIncidentActivity(params.id, {
+        kind: "message",
+        message: `${CURRENT_USER_ID}: ${message}`,
+        time: "just now",
+      });
+      return { ok: true as const, intent };
+    }
+
+    if (intent === "assign") {
+      await updateIncident(params.id, {
+        assignee: CURRENT_USER_ID,
+        assignedToMe: true,
+      });
+      await addIncidentActivity(params.id, {
+        kind: "assign",
+        message: `${CURRENT_USER_ID} took incident ${label}`,
+        time: "just now",
+      });
+      return { ok: true as const, intent };
+    }
+
+    if (intent === "dispatch" || intent === "resolve") {
+      const plan = RESPONSES[intent];
+      await updateIncident(params.id, { status: plan.status });
+      await addIncidentActivity(params.id, {
+        kind: plan.kind,
+        message: plan.message(label),
+        time: "just now",
+      });
+      return { ok: true as const, intent };
+    }
+
+    return { ok: false as const, error: "Unknown action." };
   } catch {
     return {
       ok: false as const,

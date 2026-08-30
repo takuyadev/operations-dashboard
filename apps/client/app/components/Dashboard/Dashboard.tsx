@@ -8,21 +8,11 @@ import { IncidentTable } from "@components/IncidentTable/IncidentTable";
 import { ActivityFeed } from "@components/ActivityFeed/ActivityFeed";
 import { AlertBanner } from "@components/AlertBanner/AlertBanner";
 import { LiveBadge } from "@components/LiveBadge/LiveBadge";
-import {
-  StatBlock,
-  StatBreakdown,
-  StatFigure,
-} from "@components/StatBlock/StatBlock";
 import { useIncidentStream } from "../../hooks/useIncidentStream";
-import {
-  DASHBOARD_ACTIVITY,
-  INCIDENTS,
-  type Incident,
-  type Priority,
-} from "../../data/incidents";
+import { DASHBOARD_ACTIVITY, type Incident } from "../../data/incidents";
 import styles from "./Dashboard.module.css";
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 8;
 
 function page<T>(items: T[], current: number): T[] {
   const start = (current - 1) * PAGE_SIZE;
@@ -31,14 +21,6 @@ function page<T>(items: T[], current: number): T[] {
 
 function pageCount(total: number): number {
   return Math.max(1, Math.ceil(total / PAGE_SIZE));
-}
-
-function unresolvedCounts(incidents: Incident[]): Record<Priority, number> {
-  const counts: Record<Priority, number> = { high: 0, medium: 0, low: 0 };
-  for (const incident of incidents) {
-    if (incident.status !== "resolved") counts[incident.priority] += 1;
-  }
-  return counts;
 }
 
 interface DashboardProps {
@@ -54,12 +36,6 @@ export default function Dashboard({ initialIncidents, wsUrl }: DashboardProps) {
     initialIncidents,
   );
 
-  // "Assigned to you" still runs on fixture data — not wired to the API yet.
-  const assigned = useMemo(
-    () => INCIDENTS.filter((i) => i.assignedToMe && i.status !== "resolved"),
-    [],
-  );
-
   const unresolved = useMemo(
     () => incidents.filter((i) => i.status !== "resolved"),
     [incidents],
@@ -69,10 +45,10 @@ export default function Dashboard({ initialIncidents, wsUrl }: DashboardProps) {
       incidents.find((i) => i.priority === "high" && i.status === "unresolved"),
     [incidents],
   );
-  const counts = useMemo(() => unresolvedCounts(incidents), [incidents]);
 
-  const [assignedPage, setAssignedPage] = useState(1);
-  const [unresolvedPage, setUnresolvedPage] = useState(1);
+  const [queuePage, setQueuePage] = useState(1);
+  const totalPages = pageCount(unresolved.length);
+  const current = Math.min(queuePage, totalPages);
 
   return (
     <AppShell>
@@ -91,74 +67,24 @@ export default function Dashboard({ initialIncidents, wsUrl }: DashboardProps) {
 
       <div className={styles.layout}>
         <div className={styles.main}>
-          <div className={styles.stats}>
-            <StatBlock title="Unresolved incidents">
-              <StatBreakdown
-                rows={[
-                  {
-                    tone: "high",
-                    count: counts.high,
-                    label: "high priority",
-                  },
-                  {
-                    tone: "medium",
-                    count: counts.medium,
-                    label: "medium priority",
-                  },
-                  { tone: "low", count: counts.low, label: "low priority" },
-                ]}
-              />
-            </StatBlock>
-            <StatBlock title="Assigned to you">
-              <StatFigure
-                value={assigned.length}
-                unit={
-                  assigned.length === 1
-                    ? "unresolved incident"
-                    : "unresolved incidents"
-                }
-              />
-            </StatBlock>
-          </div>
-
           <Panel
             eyebrow="Queue"
-            title="Assigned to you"
+            title="Unresolved incidents"
             flush
             action={
               <Pagination
-                page={assignedPage}
-                totalPages={pageCount(assigned.length)}
-                onChange={setAssignedPage}
-                label="assigned incidents"
+                page={current}
+                totalPages={totalPages}
+                onChange={setQueuePage}
+                label="unresolved incidents"
               />
             }
           >
             <IncidentTable
-              caption="Incidents assigned to you"
-              incidents={page(assigned, assignedPage)}
-              emptyMessage="Nothing is assigned to you right now."
-            />
-          </Panel>
-
-          <Panel
-            eyebrow="Queue"
-            title="Unresolved reports"
-            flush
-            action={
-              <Pagination
-                page={unresolvedPage}
-                totalPages={pageCount(unresolved.length)}
-                onChange={setUnresolvedPage}
-                label="unresolved reports"
-              />
-            }
-          >
-            <IncidentTable
-              caption="All unresolved incident reports"
-              incidents={page(unresolved, unresolvedPage)}
+              caption="Unresolved incidents"
+              incidents={page(unresolved, current)}
               highlightId={lastCreatedId}
-              emptyMessage="No unresolved reports."
+              emptyMessage="No unresolved incidents."
             />
           </Panel>
         </div>

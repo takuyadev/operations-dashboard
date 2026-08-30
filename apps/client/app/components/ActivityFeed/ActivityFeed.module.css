@@ -84,3 +84,8 @@
   --_bg: var(--priority-resolved-bg);
   --_fg: var(--priority-resolved-fg);
 }
+/* Operator message — neutral, distinct from the coloured system events. */
+.note {
+  --_bg: var(--surface-card-raised);
+  --_fg: var(--fg-secondary);
+}

@@ -1,18 +1,13 @@
 import { Icon } from "@components/Icon/Icon";
 import { Button } from "@components/Button/Button";
-import {
-  formatIncidentId,
-  type Incident,
-} from "../../data/incidents";
+import { formatIncidentId, type Incident } from "../../data/incidents";
 import styles from "./AlertBanner.module.css";
 
 interface AlertBannerProps {
   incident: Incident;
-  /** Assign the incident to the current operator. */
-  onAssign?: () => void;
 }
 
-export function AlertBanner({ incident, onAssign }: AlertBannerProps) {
+export function AlertBanner({ incident }: AlertBannerProps) {
   return (
     <div className={styles.banner} role="alert">
       <Icon name="alert" size={40} className={styles.icon} />
@@ -27,9 +22,6 @@ export function AlertBanner({ incident, onAssign }: AlertBannerProps) {
       <div className={styles.actions}>
         <Button to={`/incidents/${incident.id}`} variant="danger" size="lg">
           Review incident
-        </Button>
-        <Button variant="ghost" size="lg" onClick={onAssign}>
-          Assign to me
         </Button>
       </div>
     </div>

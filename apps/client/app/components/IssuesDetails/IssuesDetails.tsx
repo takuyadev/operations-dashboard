@@ -17,6 +17,7 @@ import {
   type ActivityEvent,
   type Incident,
 } from "../../data/incidents";
+import { CURRENT_USER_ID } from "../../lib/user";
 import styles from "./IssuesDetails.module.css";
 
 type IncidentDetail = Incident & { activity: ActivityEvent[] };
@@ -72,16 +73,17 @@ function IncidentView({ incident }: { incident: IncidentDetail }) {
 
   const sending = fetcher.state !== "idle";
   const pendingIntent = fetcher.formData?.get("intent");
+  const mine = incident.assignee === CURRENT_USER_ID;
   const error =
     fetcher.data && fetcher.data.ok === false ? fetcher.data.error : undefined;
 
-  // Clear the note field once a submit has landed successfully.
-  const [noteKey, setNoteKey] = useState(0);
+  // Clear the message box once a posted message has landed.
+  const [message, setMessage] = useState("");
   const seenData = useRef(fetcher.data);
   useEffect(() => {
     if (fetcher.state !== "idle" || fetcher.data === seenData.current) return;
     seenData.current = fetcher.data;
-    if (fetcher.data?.ok) setNoteKey((key) => key + 1);
+    if (fetcher.data?.ok && fetcher.data.intent === "message") setMessage("");
   }, [fetcher.state, fetcher.data]);
 
   return (
@@ -100,64 +102,98 @@ function IncidentView({ incident }: { incident: IncidentDetail }) {
       <div className={styles.layout}>
         <Panel aria-label={`Incident ${idLabel} details`}>
           <div className={styles.work}>
-            <p className={styles.assignee}>
+            <div className={styles.assignee}>
               <Avatar name={incident.assignee ?? "Unassigned"} />
-              {incident.assignee ? (
-                <span>
-                  Assigned to <strong>{incident.assignee}</strong>
+              <div className={styles.assigneeText}>
+                <span className={styles.assigneeLabel}>
+                  {incident.assignee ? (
+                    <>
+                      Assigned to <strong>{incident.assignee}</strong>
+                    </>
+                  ) : (
+                    "Unassigned"
+                  )}
                 </span>
-              ) : (
-                <span>Unassigned</span>
-              )}
-            </p>
+                <span className={styles.assigneeTitle}>{incident.summary}</span>
+              </div>
+              {!mine ? (
+                <fetcher.Form method="post" className={styles.assignForm}>
+                  <Button
+                    type="submit"
+                    name="intent"
+                    value="assign"
+                    variant="ghost"
+                    icon="user"
+                    disabled={sending || isResolved}
+                  >
+                    {sending && pendingIntent === "assign"
+                      ? "Assigning…"
+                      : "Assign to me"}
+                  </Button>
+                </fetcher.Form>
+              ) : null}
+            </div>
 
             <p className={styles.description}>{incident.detail}</p>
 
-            <fetcher.Form method="post" className={styles.responseForm}>
+            <fetcher.Form method="post" className={styles.messageForm}>
               <TextAreaField
-                key={noteKey}
-                name="note"
-                label="Note for dispatch team"
-                hint="Add instructions for the dispatch team before you send them."
-                placeholder="e.g. Approach from the Shibuya on-ramp; right two lanes affected."
-                defaultValue=""
-                disabled={sending || isResolved}
+                name="message"
+                label="Message"
+                hint="Post an update to the incident log — this does not change the status."
+                placeholder="e.g. On scene, right two lanes coned off. Awaiting recovery vehicle."
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                disabled={sending}
               />
-
-              {error ? (
-                <p className={styles.error} role="alert">
-                  {error}
-                </p>
-              ) : null}
-
-              <div className={styles.actions}>
+              <div className={styles.messageActions}>
                 <Button
                   type="submit"
                   name="intent"
-                  value="dispatch"
-                  variant="dispatch"
-                  size="lg"
-                  icon="dispatch"
-                  disabled={isResolved || sending}
+                  value="message"
+                  variant="primary"
+                  disabled={sending || message.trim() === ""}
                 >
-                  {sending && pendingIntent === "dispatch"
-                    ? "Sending…"
-                    : "Dispatch team"}
-                </Button>
-                <Button
-                  type="submit"
-                  name="intent"
-                  value="resolve"
-                  variant="resolve"
-                  size="lg"
-                  icon="check"
-                  disabled={isResolved || sending}
-                >
-                  {sending && pendingIntent === "resolve"
-                    ? "Sending…"
-                    : "Mark resolved"}
+                  {sending && pendingIntent === "message"
+                    ? "Posting…"
+                    : "Post message"}
                 </Button>
               </div>
+            </fetcher.Form>
+
+            {error ? (
+              <p className={styles.error} role="alert">
+                {error}
+              </p>
+            ) : null}
+
+            <fetcher.Form method="post" className={styles.actions}>
+              <Button
+                type="submit"
+                name="intent"
+                value="dispatch"
+                variant="dispatch"
+                size="lg"
+                icon="dispatch"
+                disabled={isResolved || sending}
+              >
+                {sending && pendingIntent === "dispatch"
+                  ? "Sending…"
+                  : "Dispatch team"}
+              </Button>
+              <Button
+                type="submit"
+                name="intent"
+                value="resolve"
+                variant="resolve"
+                size="lg"
+                icon="check"
+                disabled={isResolved || sending}
+              >
+                {sending && pendingIntent === "resolve"
+                  ? "Sending…"
+                  : "Mark resolved"}
+              </Button>
             </fetcher.Form>
 
             <hr className={styles.divider} />

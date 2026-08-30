@@ -13,6 +13,7 @@ const KIND_META: Record<ActivityKind, { label: string; className: string }> = {
   assign: { label: "Assigned", className: "assign" },
   dispatch: { label: "Dispatched", className: "dispatch" },
   resolve: { label: "Resolved", className: "resolve" },
+  message: { label: "Message", className: "note" },
 };
 
 export function ActivityFeed({

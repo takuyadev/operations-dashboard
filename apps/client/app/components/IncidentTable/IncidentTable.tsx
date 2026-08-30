@@ -2,8 +2,9 @@ import { useNavigate, Link } from "react-router";
 
 import { cx } from "@utilities/cx";
 import { PriorityTag } from "@components/Tag/PriorityTag";
-import { StatusTag } from "@components/Tag/StatusTag";
+import { StatusChip } from "@components/Tag/StatusChip";
 import { formatIncidentId, type Incident } from "../../data/incidents";
+import { CURRENT_USER_ID } from "../../lib/user";
 import styles from "./IncidentTable.module.css";
 
 interface IncidentTableProps {
@@ -16,6 +17,10 @@ interface IncidentTableProps {
   highlightId?: number | null;
 }
 
+/**
+ * Shared incident list. Columns: assignee (current operator's name in the brand
+ * colour), priority, incident (a status chip sits before the title), id.
+ */
 export function IncidentTable({
   incidents,
   emptyMessage = "No incidents to show.",
@@ -34,8 +39,8 @@ export function IncidentTable({
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr>
-            <th className={styles.colStatus} scope="col">
-              Status
+            <th className={styles.colLead} scope="col">
+              Assignee
             </th>
             <th className={styles.colPriority} scope="col">
               Priority
@@ -49,6 +54,7 @@ export function IncidentTable({
         <tbody>
           {incidents.map((incident) => {
             const href = `/incidents/${incident.id}`;
+            const mine = incident.assignee === CURRENT_USER_ID;
             return (
               <tr
                 key={incident.id}
@@ -58,21 +64,36 @@ export function IncidentTable({
                 )}
                 onClick={() => navigate(href)}
               >
-                <td className={cx(styles.cell, styles.cellStatus)}>
-                  <StatusTag status={incident.status} />
+                <td className={cx(styles.cell, styles.cellLead)}>
+                  <span
+                    className={cx(
+                      styles.assignee,
+                      !incident.assignee && styles.assigneeNone,
+                      mine && styles.assigneeMine,
+                    )}
+                  >
+                    {incident.assignee ?? "Unassigned"}
+                  </span>
                 </td>
                 <td className={styles.cell}>
                   <PriorityTag priority={incident.priority} />
                 </td>
                 <td className={cx(styles.cell, styles.incidentCell)}>
-                  <Link
-                    to={href}
-                    className={styles.summary}
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    {incident.summary}
-                  </Link>
-                  <span className={styles.location}>{incident.location}</span>
+                  <div className={styles.incidentRow}>
+                    <StatusChip status={incident.status} />
+                    <span className={styles.incidentText}>
+                      <Link
+                        to={href}
+                        className={styles.summary}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {incident.summary}
+                      </Link>
+                      <span className={styles.location}>
+                        {incident.location}
+                      </span>
+                    </span>
+                  </div>
                 </td>
                 <td className={cx(styles.cell, styles.id)}>
                   {formatIncidentId(incident.id)}

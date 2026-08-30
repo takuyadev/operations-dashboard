@@ -22,6 +22,12 @@
   color: var(--fg-link-hover);
 }
 
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
 .result {
   margin: 0;
   padding: var(--space-4) var(--space-5);

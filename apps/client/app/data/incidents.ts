@@ -30,7 +30,8 @@ export type ActivityKind =
   | "alert-low"
   | "assign"
   | "dispatch"
-  | "resolve";
+  | "resolve"
+  | "message";
 
 export interface ActivityEvent {
   id: string;

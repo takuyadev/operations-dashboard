@@ -62,28 +62,27 @@ export default function Issues({ initialIncidents, wsUrl }: IssuesProps) {
     <AppShell>
       <PageHeader title="History" meta={<LiveBadge status={status} />} />
 
-      <div className={styles.toolbar}>
-        <div className={styles.search}>
-          <SearchField
-            label="Search history by incident ID"
-            placeholder="Search by incident ID"
-            value={query}
-            onChange={(value) => {
-              setQuery(value);
-              resetPaging();
-            }}
-          />
-        </div>
-        <Pagination
-          page={current}
-          totalPages={totalPages}
-          onChange={setPage}
-          label="history"
-        />
-      </div>
-
       <div className={styles.layout}>
         <Panel aria-label="Incident history" flush>
+          <div className={styles.toolbar}>
+            <div className={styles.search}>
+              <SearchField
+                label="Search history by incident ID"
+                placeholder="Search by incident ID"
+                value={query}
+                onChange={(value) => {
+                  setQuery(value);
+                  resetPaging();
+                }}
+              />
+            </div>
+            <Pagination
+              page={current}
+              totalPages={totalPages}
+              onChange={setPage}
+              label="history"
+            />
+          </div>
           <p className={styles.count}>
             {results.length} {results.length === 1 ? "incident" : "incidents"}
           </p>
