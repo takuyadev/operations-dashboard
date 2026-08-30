@@ -16,7 +16,7 @@ services:
     networks:
       - network
   postgres:
-    container_name: postgres_operations-dashboard
+    container_name: operations-dashboard-db
     image: postgres:16
     volumes:
       - database:/var/lib/postgresql/data
