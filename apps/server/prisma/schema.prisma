@@ -1,0 +1,61 @@
+// Prisma schema for the operations-dashboard server.
+// Shapes mirror the UI contract in apps/client/app/data/incidents.ts.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Priority {
+  high
+  medium
+  low
+}
+
+enum IncidentStatus {
+  unresolved
+  dispatched
+  resolved
+}
+
+model Incident {
+  id           Int             @id @default(autoincrement())
+  status       IncidentStatus  @default(unresolved)
+  priority     Priority        @default(medium)
+  /// Short scannable description — what and where.
+  summary      String
+  /// Road / corridor the incident sits on.
+  location     String
+  /// Longer account shown on the detail page.
+  detail       String
+  /// Operator the incident is assigned to, or null if unassigned.
+  assignee     String?
+  /// When the incident was reported.
+  reportedAt   DateTime        @default(now())
+  assignedToMe Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  activity     ActivityEvent[]
+
+  @@index([status])
+  @@index([priority])
+}
+
+model ActivityEvent {
+  id         String    @id @default(cuid())
+  /// alert-high | alert-low | assign | dispatch | resolve
+  kind       String
+  message    String
+  /// Human relative time string, e.g. "4 min ago".
+  time       String
+  incidentId Int?
+  incident   Incident? @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+
+  @@index([incidentId])
+  @@index([createdAt])
+}

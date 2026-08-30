@@ -4,12 +4,15 @@ services:
     restart: always
     ports:
       - "5173:5173"
+      - "4000:4000"
     volumes:
       - .:/app
       - /app/node_modules
       - /app/apps/client/node_modules
+      - /app/apps/server/node_modules
     environment:
       DATABASE_URL: postgres://user:password@postgres:5432/operations-dashboard
+      PORT: "4000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -18,6 +21,10 @@ services:
   postgres:
     container_name: operations-dashboard-db
     image: postgres:16
+    ports:
+      # Published on 5433 so the server can run on the host with `pnpm dev`
+      # without clashing with a native Postgres already on 5432.
+      - "5433:5432"
     volumes:
       - database:/var/lib/postgresql/data
     healthcheck:
