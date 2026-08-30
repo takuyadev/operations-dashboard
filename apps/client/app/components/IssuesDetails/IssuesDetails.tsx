@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFetcher } from "react-router";
 
 import { cx } from "@utilities/cx";
 import { AppShell } from "@components/AppShell/AppShell";
@@ -13,23 +14,29 @@ import { ActivityFeed } from "@components/ActivityFeed/ActivityFeed";
 import { MediaFrame } from "@components/MediaFrame/MediaFrame";
 import {
   formatIncidentId,
-  getIncident,
-  getIncidentActivity,
   type ActivityEvent,
-  type IncidentStatus,
+  type Incident,
 } from "../../data/incidents";
 import styles from "./IssuesDetails.module.css";
 
+type IncidentDetail = Incident & { activity: ActivityEvent[] };
+
+/** Shape returned by the IncidentDetails route action. */
+type ResponseResult = { ok: true; intent: string } | { ok: false; error: string };
+
 interface IssuesDetailsProps {
-  /** Route param from /incidents/:id */
-  id?: string;
+  /** Incident loaded from `GET /api/incidents/:id`, or null when nothing matched. */
+  incident: IncidentDetail | null;
+  /** The raw :id from the URL, shown in the not-found message. */
+  requestedId?: string;
 }
 
 const BACK = { to: "/incidents", label: "Back to history" };
 
-export default function IssuesDetails({ id }: IssuesDetailsProps) {
-  const incident = useMemo(() => getIncident(id), [id]);
-
+export default function IssuesDetails({
+  incident,
+  requestedId,
+}: IssuesDetailsProps) {
   if (!incident) {
     return (
       <AppShell>
@@ -38,8 +45,10 @@ export default function IssuesDetails({ id }: IssuesDetailsProps) {
           <div className={styles.notFound}>
             <p>
               No incident matches{" "}
-              <span className="mono">{id ? `#${id}` : "that address"}</span>. It
-              may have been merged or removed.
+              <span className="mono">
+                {requestedId ? `#${requestedId}` : "that address"}
+              </span>
+              . It may have been merged or removed.
             </p>
             <Button to={BACK.to} variant="ghost">
               Back to history
@@ -50,43 +59,30 @@ export default function IssuesDetails({ id }: IssuesDetailsProps) {
     );
   }
 
-  return <IncidentView key={incident.id} incidentId={incident.id} />;
+  return <IncidentView key={incident.id} incident={incident} />;
 }
 
-function IncidentView({ incidentId }: { incidentId: number }) {
-  const incident = getIncident(incidentId)!;
-  const [status, setStatus] = useState<IncidentStatus>(incident.status);
-  const [note, setNote] = useState("");
-  const [events, setEvents] = useState<ActivityEvent[]>(() =>
-    getIncidentActivity(incidentId),
-  );
+function IncidentView({ incident }: { incident: IncidentDetail }) {
+  const fetcher = useFetcher<ResponseResult>();
+  const idLabel = formatIncidentId(incident.id);
 
-  const idLabel = formatIncidentId(incidentId);
+  // Server-owned state — the route loader revalidates after every submit.
+  const events = incident.activity ?? [];
+  const isResolved = incident.status === "resolved";
 
-  const logEvent = (event: ActivityEvent) => setEvents((prev) => [event, ...prev]);
+  const sending = fetcher.state !== "idle";
+  const pendingIntent = fetcher.formData?.get("intent");
+  const error =
+    fetcher.data && fetcher.data.ok === false ? fetcher.data.error : undefined;
 
-  const dispatch = () => {
-    setStatus("dispatched");
-    logEvent({
-      id: `local-${Date.now()}`,
-      kind: "dispatch",
-      message: note.trim()
-        ? `You dispatched a team to incident ${idLabel}: “${note.trim()}”`
-        : `You dispatched a team to incident ${idLabel}`,
-      time: "just now",
-    });
-    setNote("");
-  };
-
-  const resolve = () => {
-    setStatus("resolved");
-    logEvent({
-      id: `local-${Date.now()}`,
-      kind: "resolve",
-      message: `You resolved incident ${idLabel}`,
-      time: "just now",
-    });
-  };
+  // Clear the note field once a submit has landed successfully.
+  const [noteKey, setNoteKey] = useState(0);
+  const seenData = useRef(fetcher.data);
+  useEffect(() => {
+    if (fetcher.state !== "idle" || fetcher.data === seenData.current) return;
+    seenData.current = fetcher.data;
+    if (fetcher.data?.ok) setNoteKey((key) => key + 1);
+  }, [fetcher.state, fetcher.data]);
 
   return (
     <AppShell>
@@ -96,7 +92,7 @@ function IncidentView({ incidentId }: { incidentId: number }) {
         meta={
           <div className={styles.tags}>
             <PriorityTag priority={incident.priority} size="lg" />
-            <StatusTag status={status} size="lg" />
+            <StatusTag status={incident.status} size="lg" />
           </div>
         }
       />
@@ -117,34 +113,52 @@ function IncidentView({ incidentId }: { incidentId: number }) {
 
             <p className={styles.description}>{incident.detail}</p>
 
-            <TextAreaField
-              label="Note for dispatch team"
-              hint="Add instructions for the dispatch team before you send them."
-              placeholder="e.g. Approach from the Shibuya on-ramp; right two lanes affected."
-              value={note}
-              onChange={(event) => setNote(event.target.value)}
-            />
+            <fetcher.Form method="post" className={styles.responseForm}>
+              <TextAreaField
+                key={noteKey}
+                name="note"
+                label="Note for dispatch team"
+                hint="Add instructions for the dispatch team before you send them."
+                placeholder="e.g. Approach from the Shibuya on-ramp; right two lanes affected."
+                defaultValue=""
+                disabled={sending || isResolved}
+              />
 
-            <div className={styles.actions}>
-              <Button
-                variant="dispatch"
-                size="lg"
-                icon="dispatch"
-                onClick={dispatch}
-                disabled={status === "resolved"}
-              >
-                Dispatch team
-              </Button>
-              <Button
-                variant="resolve"
-                size="lg"
-                icon="check"
-                onClick={resolve}
-                disabled={status === "resolved"}
-              >
-                Mark resolved
-              </Button>
-            </div>
+              {error ? (
+                <p className={styles.error} role="alert">
+                  {error}
+                </p>
+              ) : null}
+
+              <div className={styles.actions}>
+                <Button
+                  type="submit"
+                  name="intent"
+                  value="dispatch"
+                  variant="dispatch"
+                  size="lg"
+                  icon="dispatch"
+                  disabled={isResolved || sending}
+                >
+                  {sending && pendingIntent === "dispatch"
+                    ? "Sending…"
+                    : "Dispatch team"}
+                </Button>
+                <Button
+                  type="submit"
+                  name="intent"
+                  value="resolve"
+                  variant="resolve"
+                  size="lg"
+                  icon="check"
+                  disabled={isResolved || sending}
+                >
+                  {sending && pendingIntent === "resolve"
+                    ? "Sending…"
+                    : "Mark resolved"}
+                </Button>
+              </div>
+            </fetcher.Form>
 
             <hr className={styles.divider} />
 

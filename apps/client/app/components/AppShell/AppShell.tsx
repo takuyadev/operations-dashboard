@@ -3,6 +3,7 @@ import { NavLink } from "react-router";
 
 import { cx } from "@utilities/cx";
 import { Icon } from "@components/Icon/Icon";
+import { ThemeToggle } from "@components/ThemeToggle/ThemeToggle";
 import styles from "./AppShell.module.css";
 
 interface AppShellProps {
@@ -12,6 +13,7 @@ interface AppShellProps {
 const NAV = [
   { to: "/", label: "Dashboard", icon: "dashboard", end: true },
   { to: "/incidents", label: "History", icon: "history", end: false },
+  { to: "/simulate", label: "Simulate", icon: "alert", end: true },
 ] as const;
 
 export function AppShell({ children }: AppShellProps) {
@@ -41,12 +43,15 @@ export function AppShell({ children }: AppShellProps) {
 
         <div className={styles.spacer} />
 
-        <div className={styles.user}>
-          <Icon name="user" size={28} />
-          <span className={styles.userName}>
-            <strong>Operator</strong>
-            <span>Shift C</span>
-          </span>
+        <div className={styles.footer}>
+          <ThemeToggle className={styles.themeToggle} />
+          <div className={styles.user}>
+            <Icon name="user" size={28} />
+            <span className={styles.userName}>
+              <strong>Operator</strong>
+              <span>Shift C</span>
+            </span>
+          </div>
         </div>
       </header>
 

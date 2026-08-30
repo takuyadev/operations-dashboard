@@ -48,6 +48,27 @@
   background-color: var(--surface-card-raised);
 }
 
+/* Newly arrived over the live feed — a calm brand-tinted flash that settles. */
+.rowNew {
+  animation: rowNew 6s var(--ease-standard) forwards;
+}
+
+@keyframes rowNew {
+  0%,
+  55% {
+    background-color: var(--priority-assign-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowNew {
+    animation: none;
+  }
+}
+
 .cell {
   padding: var(--space-4);
   vertical-align: middle;

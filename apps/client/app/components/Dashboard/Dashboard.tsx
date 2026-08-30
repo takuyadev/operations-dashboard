@@ -7,15 +7,18 @@ import { Pagination } from "@components/Pagination/Pagination";
 import { IncidentTable } from "@components/IncidentTable/IncidentTable";
 import { ActivityFeed } from "@components/ActivityFeed/ActivityFeed";
 import { AlertBanner } from "@components/AlertBanner/AlertBanner";
+import { LiveBadge } from "@components/LiveBadge/LiveBadge";
 import {
   StatBlock,
   StatBreakdown,
   StatFigure,
 } from "@components/StatBlock/StatBlock";
+import { useIncidentStream } from "../../hooks/useIncidentStream";
 import {
   DASHBOARD_ACTIVITY,
   INCIDENTS,
-  unresolvedByPriority,
+  type Incident,
+  type Priority,
 } from "../../data/incidents";
 import styles from "./Dashboard.module.css";
 
@@ -30,21 +33,43 @@ function pageCount(total: number): number {
   return Math.max(1, Math.ceil(total / PAGE_SIZE));
 }
 
-export default function Dashboard() {
+function unresolvedCounts(incidents: Incident[]): Record<Priority, number> {
+  const counts: Record<Priority, number> = { high: 0, medium: 0, low: 0 };
+  for (const incident of incidents) {
+    if (incident.status !== "resolved") counts[incident.priority] += 1;
+  }
+  return counts;
+}
+
+interface DashboardProps {
+  /** Incidents fetched on the server for the first paint. */
+  initialIncidents: Incident[];
+  /** WebSocket endpoint for the live incident feed. */
+  wsUrl: string;
+}
+
+export default function Dashboard({ initialIncidents, wsUrl }: DashboardProps) {
+  const { incidents, status, lastCreatedId } = useIncidentStream(
+    wsUrl,
+    initialIncidents,
+  );
+
+  // "Assigned to you" still runs on fixture data — not wired to the API yet.
   const assigned = useMemo(
     () => INCIDENTS.filter((i) => i.assignedToMe && i.status !== "resolved"),
     [],
   );
+
   const unresolved = useMemo(
-    () => INCIDENTS.filter((i) => i.status !== "resolved"),
-    [],
+    () => incidents.filter((i) => i.status !== "resolved"),
+    [incidents],
   );
   const alertIncident = useMemo(
     () =>
-      INCIDENTS.find((i) => i.priority === "high" && i.status === "unresolved"),
-    [],
+      incidents.find((i) => i.priority === "high" && i.status === "unresolved"),
+    [incidents],
   );
-  const counts = useMemo(() => unresolvedByPriority(), []);
+  const counts = useMemo(() => unresolvedCounts(incidents), [incidents]);
 
   const [assignedPage, setAssignedPage] = useState(1);
   const [unresolvedPage, setUnresolvedPage] = useState(1);
@@ -55,6 +80,7 @@ export default function Dashboard() {
         title="Dashboard"
         meta={
           <>
+            <LiveBadge status={status} />
             <span>Shift C</span>
             <span>02:14 JST</span>
           </>
@@ -131,6 +157,7 @@ export default function Dashboard() {
             <IncidentTable
               caption="All unresolved incident reports"
               incidents={page(unresolved, unresolvedPage)}
+              highlightId={lastCreatedId}
               emptyMessage="No unresolved reports."
             />
           </Panel>

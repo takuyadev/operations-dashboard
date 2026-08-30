@@ -11,19 +11,33 @@ import {
   EMPTY_FILTERS,
   type IncidentFilters,
 } from "@components/FilterPanel/FilterPanel";
-import { INCIDENTS } from "../../data/incidents";
+import { LiveBadge } from "@components/LiveBadge/LiveBadge";
+import { useIncidentStream } from "../../hooks/useIncidentStream";
+import type { Incident } from "../../data/incidents";
 import styles from "./Issues.module.css";
 
 const PAGE_SIZE = 8;
 
-export default function Issues() {
+interface IssuesProps {
+  /** Incidents fetched on the server for the first paint. */
+  initialIncidents: Incident[];
+  /** WebSocket endpoint for the live incident feed. */
+  wsUrl: string;
+}
+
+export default function Issues({ initialIncidents, wsUrl }: IssuesProps) {
+  const { incidents, status, lastCreatedId } = useIncidentStream(
+    wsUrl,
+    initialIncidents,
+  );
+
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<IncidentFilters>(EMPTY_FILTERS);
   const [page, setPage] = useState(1);
 
   const results = useMemo(() => {
     const trimmed = query.trim();
-    return INCIDENTS.filter((incident) => {
+    return incidents.filter((incident) => {
       if (trimmed && !String(incident.id).includes(trimmed)) return false;
       if (
         filters.priorities.length > 0 &&
@@ -36,7 +50,7 @@ export default function Issues() {
       if (filters.yearTo && year > Number(filters.yearTo)) return false;
       return true;
     });
-  }, [query, filters]);
+  }, [query, filters, incidents]);
 
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
   const current = Math.min(page, totalPages);
@@ -46,7 +60,7 @@ export default function Issues() {
 
   return (
     <AppShell>
-      <PageHeader title="History" />
+      <PageHeader title="History" meta={<LiveBadge status={status} />} />
 
       <div className={styles.toolbar}>
         <div className={styles.search}>
@@ -76,6 +90,7 @@ export default function Issues() {
           <IncidentTable
             caption="Incident history"
             incidents={shown}
+            highlightId={lastCreatedId}
             emptyMessage="No incidents match your search and filters."
           />
         </Panel>

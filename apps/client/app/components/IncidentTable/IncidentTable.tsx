@@ -12,12 +12,15 @@ interface IncidentTableProps {
   emptyMessage?: string;
   /** Accessible caption for the table. */
   caption: string;
+  /** Row to briefly flag as newly arrived (e.g. pushed over the live feed). */
+  highlightId?: number | null;
 }
 
 export function IncidentTable({
   incidents,
   emptyMessage = "No incidents to show.",
   caption,
+  highlightId = null,
 }: IncidentTableProps) {
   const navigate = useNavigate();
 
@@ -49,7 +52,10 @@ export function IncidentTable({
             return (
               <tr
                 key={incident.id}
-                className={styles.row}
+                className={cx(
+                  styles.row,
+                  incident.id === highlightId && styles.rowNew,
+                )}
                 onClick={() => navigate(href)}
               >
                 <td className={cx(styles.cell, styles.cellStatus)}>

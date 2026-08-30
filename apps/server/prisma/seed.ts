@@ -116,6 +116,16 @@ const ACTIVITY = [
 ] as const;
 
 async function main() {
+  const force = process.argv.includes("--force");
+  const existing = await prisma.incident.count();
+
+  if (existing > 0 && !force) {
+    console.log(
+      `[seed] ${existing} incidents already present — nothing to do. Re-run with --force to wipe and reseed.`,
+    );
+    return;
+  }
+
   console.log("[seed] clearing existing rows…");
   await prisma.activityEvent.deleteMany();
   await prisma.incident.deleteMany();

@@ -19,6 +19,15 @@ html {
   text-size-adjust: 100%;
 }
 
+/* Keep native UI (scrollbars, form controls, caret) in step with the theme.
+   The design system is dark-first; `[data-theme="light"]` is the only override. */
+:root {
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
 body {
   min-height: 100vh;
   background: var(--surface-page);
