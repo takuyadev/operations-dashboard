@@ -1,4 +1,8 @@
 .DS_Store
-.env
+node_modules
+**/node_modules
+.pnpm-store
 .turbo
-/node_modules/
+.git
+build
+dist
