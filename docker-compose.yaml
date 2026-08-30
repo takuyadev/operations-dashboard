@@ -1,0 +1,40 @@
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/client/node_modules
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/operations-dashboard
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - network
+  postgres:
+    container_name: postgres_operations-dashboard
+    image: postgres:16
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d operations-dashboard"]
+      interval: 10s
+      retries: 5
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: operations-dashboard
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - network
+    restart: always
+
+volumes:
+  database:
+
+networks:
+  network:
