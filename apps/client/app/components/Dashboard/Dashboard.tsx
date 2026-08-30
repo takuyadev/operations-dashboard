@@ -68,7 +68,6 @@ export default function Dashboard({ initialIncidents, wsUrl }: DashboardProps) {
       <div className={styles.layout}>
         <div className={styles.main}>
           <Panel
-            eyebrow="Queue"
             title="Unresolved incidents"
             flush
             action={
@@ -90,7 +89,7 @@ export default function Dashboard({ initialIncidents, wsUrl }: DashboardProps) {
         </div>
 
         <aside className={styles.aside}>
-          <Panel eyebrow="Live" title="Latest activity" flush>
+          <Panel title="Latest activity" flush>
             <ActivityFeed events={DASHBOARD_ACTIVITY} />
           </Panel>
         </aside>

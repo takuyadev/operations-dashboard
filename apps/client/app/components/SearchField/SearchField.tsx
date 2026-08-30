@@ -19,7 +19,7 @@ export function SearchField({
   const id = useId();
   return (
     <div className={styles.field}>
-      <Icon name="search" size={24} className={styles.icon} />
+      <Icon name="search" size={20} className={styles.icon} />
       <label htmlFor={id} className="sr-only">
         {label}
       </label>
