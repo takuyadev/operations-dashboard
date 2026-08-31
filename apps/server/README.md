@@ -1,82 +1,87 @@
 # server
 
-Express + Prisma API for the operations dashboard, with a WebSocket feed that
-broadcasts when incidents change. No authentication — every endpoint is open.
+The operations-dashboard REST API and realtime feed: Express 5 + Prisma 6 over
+PostgreSQL, with a WebSocket that broadcasts on every incident change. No
+authentication — this is a proof of concept and every endpoint is open.
+
+> Running the stack (Docker, `pnpm dev`, seeding, environment) lives in the
+> [root README](../../README.md). This file is only about how the server is
+> organised.
 
 ## Stack
 
-- **Express 5** — HTTP/REST
-- **Prisma 6** — Postgres access (the `postgres` service in `docker-compose.yaml`)
-- **ws** — WebSocket server mounted at `/ws`
-- **tsx** — TypeScript execution / watch in dev
+| Concern        | Choice                          |
+| -------------- | ------------------------------- |
+| HTTP / routing | Express 5                       |
+| Database       | Prisma 6 → PostgreSQL           |
+| Realtime       | `ws`, mounted at `/ws`          |
+| Dev runtime    | `tsx watch`                     |
 
-## Run
+## Layout
 
-From the repo root, `pnpm dev` starts the client and this server together via
-Turbo. Postgres must be up first:
-
-```bash
-docker compose up -d postgres   # publishes 5432 to localhost
-pnpm install
-pnpm dev                        # client :5173, server :4000
+```
+src/
+  index.ts                 entrypoint — createApp(), attach WebSocket, listen
+  app.ts                   Express app: middleware, /api mount, error handler
+  lib/
+    prisma.ts              shared PrismaClient
+    events.ts              in-process pub/sub bus (publish / onEvent)
+    http.ts                ApiError, parseId
+  realtime/
+    ws.ts                  attachWebSocket — subscribes to the bus, fans out
+  routes/
+    index.ts               mounts every resource under /api + endpoint catalog
+    <resource>/
+      <resource>.routes.ts       Router — HTTP method + path wiring
+      <resource>.controller.ts   request → service → response
+      <resource>.service.ts      Prisma access + domain logic; emits events
+      <resource>.schema.ts       parse/validate untrusted input (incidents only)
+prisma/
+  schema.prisma            data model
+  seed.ts                  fixture data (mirrors apps/client/app/data/incidents.ts)
 ```
 
-Server only:
+### Request flow
 
-```bash
-pnpm --filter server dev        # runs `prisma db push` then `tsx watch`
-pnpm --filter server db:seed    # load the fixture data
-```
+`routes` (method + path) → `controller` (parse input, call service, shape the
+response) → `service` (all Prisma calls; on a write it `publish()`es a domain
+event) → `lib/events` bus → `realtime/ws` relays it to every client.
 
-`DATABASE_URL` and `PORT` come from `apps/server/.env` (see `.env.example`).
+Errors are thrown, not returned: an `ApiError(status, message)` from `lib/http`
+becomes `{ error }` with that status in `app.ts`; anything else is a 500.
 
-## REST
+### Adding a resource
 
-Base URL `http://localhost:4000`.
+1. Create `src/routes/<name>/` with `<name>.routes.ts`, `<name>.controller.ts`,
+   `<name>.service.ts` (and `<name>.schema.ts` if it accepts a request body).
+2. Register its Router in `src/routes/index.ts` and add its rows to
+   `endpointCatalog`.
 
-| Method | Path | Notes |
-| --- | --- | --- |
-| GET | `/api/health` | liveness + `SELECT 1` |
-| GET | `/api/incidents` | filters: `?status=` `?priority=` `?assignedToMe=true` |
-| POST | `/api/incidents` | creates an incident, emits `incident:created` |
-| GET | `/api/incidents/:id` | incident + its activity |
-| PATCH | `/api/incidents/:id` | partial update, emits `incident:updated` |
-| DELETE | `/api/incidents/:id` | emits `incident:deleted` |
-| GET | `/api/incidents/:id/activity` | activity for one incident |
-| POST | `/api/incidents/:id/activity` | append an event, emits `activity:created` |
-| GET | `/api/activity` | global feed, `?take=` (max 200) |
+## Resources
 
-Create example:
+| Mount            | Purpose                                            |
+| ---------------- | ------------------------------------------------- |
+| `/api/health`    | liveness + database check                          |
+| `/api/incidents` | incidents CRUD and their activity trail            |
+| `/api/activity`  | global activity feed across all incidents          |
+| `/api/user`      | current operator (stub) + operator roster          |
 
-```bash
-curl -X POST http://localhost:4000/api/incidents \
-  -H 'content-type: application/json' \
-  -d '{"summary":"Debris in lane 2","location":"Route 246 · Shibuya","detail":"Pallet in the center lane.","priority":"high"}'
-```
+`GET /` returns the live endpoint catalog; each `*.routes.ts` lists its routes.
 
-## WebSocket
+## Realtime
 
-Connect to `ws://localhost:4000/ws`. On connect the server sends
-`{"type":"connected"}`. After that every change is pushed as JSON:
+A write publishes an event that `/ws` relays to every connected client as JSON
+(`{ "type": …, "data": … }`):
 
-```jsonc
-{ "type": "incident:created", "data": { /* incident + activity */ } }
-{ "type": "incident:updated", "data": { /* incident */ } }
-{ "type": "incident:deleted", "data": { "id": 12345 } }
-{ "type": "activity:created", "data": { /* activity event */ } }
-```
+| Event              | When                          |
+| ------------------ | ----------------------------- |
+| `incident:created` | an incident is created        |
+| `incident:updated` | an incident is patched        |
+| `incident:deleted` | an incident is deleted        |
+| `activity:created` | an activity entry is appended |
 
-Send the string `ping` to get `pong` back.
+## Data model
 
-Quick check:
-
-```bash
-node -e "const ws=new WebSocket('ws://localhost:4000/ws');ws.onmessage=e=>console.log(e.data)"
-```
-
-## Schema
-
-`Incident` and `ActivityEvent` in `prisma/schema.prisma`, matching the UI
-contract in `apps/client/app/data/incidents.ts`. First iteration uses
-`prisma db push` (no migration history); switch to `prisma migrate` when the
-shape settles.
+`Incident` and `ActivityEvent` in `prisma/schema.prisma`, shaped to match the UI
+contract in `apps/client/app/data/incidents.ts`. Dev uses `prisma db push` — no
+migration history yet.
