@@ -11,7 +11,31 @@
   background-color: var(--priority-critical-bg);
   border: 2px solid var(--critical-600);
   border-radius: var(--radius-lg);
-  animation: ds-pulse-critical var(--pulse-duration) var(--ease-standard) infinite;
+  /* Slow (1.6s), non-bouncy "breathing" pulse — tuned for sustained monitoring,
+     never a strobe. Halo expands out and the outline brightens, then settles. */
+  animation: alertPulse var(--pulse-duration) ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0%,
+  100% {
+    border-color: var(--critical-600);
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    border-color: var(--critical-400);
+    box-shadow:
+      0 0 0 6px color-mix(in oklch, var(--critical-500) 24%, transparent),
+      0 0 34px color-mix(in oklch, var(--critical-500) 45%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    animation: none;
+    border-color: var(--critical-400);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--critical-500) 20%, transparent);
+  }
 }
 
 .icon {
