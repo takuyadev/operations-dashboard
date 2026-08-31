@@ -22,7 +22,6 @@ export function AppShell({ children }: AppShellProps) {
       <header className={styles.rail}>
         <div className={styles.brand}>
           <span className={styles.brandMark}>RD</span>
-          <span className={styles.brandName}>Road Operations</span>
         </div>
 
         <nav className={styles.nav} aria-label="Primary">

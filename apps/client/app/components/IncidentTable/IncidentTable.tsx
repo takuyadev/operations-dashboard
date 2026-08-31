@@ -15,17 +15,20 @@ interface IncidentTableProps {
   caption: string;
   /** Row to briefly flag as newly arrived (e.g. pushed over the live feed). */
   highlightId?: number | null;
+  /** Show the status column (icon marker). Hidden on the Dashboard. */
+  showStatus?: boolean;
 }
 
 /**
  * Shared incident list. Columns: assignee (current operator's name in the brand
- * colour), priority, incident (a status chip sits before the title), id.
+ * colour), priority, status (icon marker; optional), incident, id.
  */
 export function IncidentTable({
   incidents,
   emptyMessage = "No incidents to show.",
   caption,
   highlightId = null,
+  showStatus = true,
 }: IncidentTableProps) {
   const navigate = useNavigate();
 
@@ -45,6 +48,11 @@ export function IncidentTable({
             <th className={styles.colPriority} scope="col">
               Priority
             </th>
+            {showStatus && (
+              <th className={styles.colStatus} scope="col">
+                Status
+              </th>
+            )}
             <th scope="col">Incident</th>
             <th className={styles.colId} scope="col">
               ID
@@ -78,9 +86,13 @@ export function IncidentTable({
                 <td className={styles.cell}>
                   <PriorityTag priority={incident.priority} />
                 </td>
+                {showStatus && (
+                  <td className={styles.cell}>
+                    <StatusChip status={incident.status} />
+                  </td>
+                )}
                 <td className={cx(styles.cell, styles.incidentCell)}>
                   <div className={styles.incidentRow}>
-                    <StatusChip status={incident.status} />
                     <span className={styles.incidentText}>
                       <Link
                         to={href}

@@ -16,15 +16,18 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
+  /* Fixed bar height so every panel header lines up across pages, with or
+     without an action control. */
+  min-height: var(--hit-target-comfortable);
+  padding: var(--space-3) var(--space-5);
   border-bottom: var(--border);
   background-color: var(--surface-sunken);
+  box-sizing: border-box;
 }
 
 .headingGroup {
   display: flex;
   flex-direction: column;
-  gap: 2px;
   min-width: 0;
 }
 
@@ -32,11 +35,6 @@
   font-size: var(--text-md);
   font-weight: var(--weight-bold);
   letter-spacing: 0.01em;
-}
-
-.eyebrow {
-  /* extends global .label */
-  color: var(--fg-tertiary);
 }
 
 .action {

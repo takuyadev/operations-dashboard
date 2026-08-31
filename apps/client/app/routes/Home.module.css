@@ -1,0 +1,54 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--aside-w);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.aside {
+  position: sticky;
+  top: var(--space-10);
+}
+
+/* Latest activity: cap to the viewport and scroll the feed inside the panel
+   body rather than growing the page. */
+.activityPanel {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--space-10) - var(--space-8));
+}
+
+.activityPanel > div:last-child {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Unresolved queue: footer count + the infinite-scroll sentinel. */
+.queueFoot {
+  padding: var(--space-3) var(--space-5);
+  border-top: var(--border-soft);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  text-align: center;
+}
+
+.sentinel {
+  height: 1px;
+}
+
+@media (max-width: 1180px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .aside {
+    position: static;
+  }
+}

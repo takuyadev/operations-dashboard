@@ -64,11 +64,6 @@
   gap: var(--space-4);
 }
 
-.messageActions {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .error {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);

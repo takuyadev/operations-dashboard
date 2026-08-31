@@ -43,7 +43,7 @@ export default function Simulate({ actionData }: Route.ComponentProps) {
     <AppShell>
       <PageHeader title="Simulate an incident" />
 
-      <Panel eyebrow="Proof of concept" title="Emit a new incident">
+      <Panel title="Emit a new incident">
         <div className={styles.wrap}>
           <p className={styles.lede}>
             Each button posts a new incident to the API. The server writes it to

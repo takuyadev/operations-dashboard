@@ -6,8 +6,6 @@ import styles from "./Panel.module.css";
 interface PanelProps {
   /** Main panel heading, e.g. "Assigned to you". */
   title?: ReactNode;
-  /** Small tracked label above the title, e.g. "QUEUE". */
-  eyebrow?: string;
   /** Right-aligned control in the header — typically <Pagination>. */
   action?: ReactNode;
   /** Remove body padding, e.g. when the body is a full-bleed table. */
@@ -20,23 +18,19 @@ interface PanelProps {
 
 export function Panel({
   title,
-  eyebrow,
   action,
   flush = false,
   children,
   className,
   "aria-label": ariaLabel,
 }: PanelProps) {
-  const hasHeader = Boolean(title || eyebrow || action);
+  const hasHeader = Boolean(title || action);
 
   return (
     <section className={cx(styles.panel, className)} aria-label={ariaLabel}>
       {hasHeader ? (
         <header className={styles.header}>
           <div className={styles.headingGroup}>
-            {eyebrow ? (
-              <span className={cx("label", styles.eyebrow)}>{eyebrow}</span>
-            ) : null}
             {title ? <h2 className={styles.heading}>{title}</h2> : null}
           </div>
           {action ? <div className={styles.action}>{action}</div> : null}

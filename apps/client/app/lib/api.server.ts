@@ -28,6 +28,15 @@ export async function listIncidents(): Promise<Incident[]> {
   return (await res.json()) as Incident[];
 }
 
+/** Recent cross-incident activity, newest first. `GET /api/activity?take=`. */
+export async function listActivity(take = 20): Promise<ActivityEvent[]> {
+  const res = await fetch(`${API_URL}/api/activity?take=${take}`);
+  if (!res.ok) {
+    throw new Response(`Activity API responded ${res.status}`, { status: 502 });
+  }
+  return (await res.json()) as ActivityEvent[];
+}
+
 /** Incidents whose `assignee` matches the given user id. `GET /api/incidents?assignee=`. */
 export async function listAssignedIncidents(userId: string): Promise<Incident[]> {
   const res = await fetch(

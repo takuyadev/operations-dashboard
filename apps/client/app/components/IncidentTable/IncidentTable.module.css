@@ -29,6 +29,9 @@
 .colPriority {
   width: 1%;
 }
+.colStatus {
+  width: 1%;
+}
 .colId {
   width: 1%;
   text-align: right;
