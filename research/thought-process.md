@@ -39,6 +39,9 @@ One such case was an infinite loop caused by useEffect dependency, which is a co
 
 From this experience, being able to debug issues is still an important skill to have, and can further enhance the speed of development.
 
+### 4. Learning Opportunities
+This was a new skill that I implemented with this project, alongside quite a few (/caveman, /grill-me) but /teach turned out to be a great skill for learning what Claude's intention, and find gaps in my own understanding. It gave me new perspective, and the quiz format further solidified my understanding.
+
 # UX/UI Design
 
 ## UX Research
