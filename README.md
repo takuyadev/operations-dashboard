@@ -6,6 +6,9 @@ Real-time road-incident monitoring for a traffic operations centre: operators
 watch incoming events, review them against CCTV and sensor data, and dispatch
 response teams.
 
+# Research
+If you would like to see all research, development process, and AI chat logs, please view documentation included in [/research](https://github.com/takuyadev/operations-dashboard/tree/main/research) folder.
+
 ## Features
 
 - Admin dashboard for operations-centre staff
