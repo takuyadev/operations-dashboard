@@ -9,6 +9,10 @@
   border: var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  /* Clip children to the rounded corners — otherwise a flush body (full-bleed
+     table, or a scrolling activity feed) paints its square corners over the
+     panel's border. */
+  overflow: hidden;
 }
 
 .header {
