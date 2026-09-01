@@ -1,6 +1,6 @@
 # operations-dashboard
 
-https://github.com/user-attachments/assets/5e0902e1-e88e-4f1a-ac3e-32a54e257d91
+https://github.com/user-attachments/assets/0d86d90c-6153-4266-a083-4d034b7b62e8
 
 Real-time road-incident monitoring for a traffic operations centre: operators
 watch incoming events, review them against CCTV and sensor data, and dispatch
