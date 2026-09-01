@@ -1,5 +1,5 @@
 # Development
-Initial scaffolding of the project, (choosing tech stack, setting up project with pnpm + turbo and configuring Docker) was handled by myself, but this project was created by utilizing Claude Code and multiple subagents. (Chat logs are included in /research/chats). 
+Initial scaffolding of the project, (choosing tech stack, setting up project with pnpm + turbo and configuring Docker) was handled by myself, but this project was created by utilizing Claude Code and multiple sub-agents. (Chat logs are included in /research/chats). 
 
 ## Tech Stack
 ### AI
@@ -19,7 +19,7 @@ Initial scaffolding of the project, (choosing tech stack, setting up project wit
 ### Back-end
 - PostgresSQL
 - Prisma
-  - Prisma was chosen as it's an ORM that allows for simple database schema and seed procedure. Often, PRimsa suffers from poor performance because it does not handle complex SQL queries gracefully for large scale projects, however that is not an issue for proof of concept.
+  - Prisma was chosen as it's an ORM that allows for simple database schema and seed procedure. Often, Prisma suffers from poor performance because it does not handle complex SQL queries gracefully for large scale projects, however that is not an issue for proof of concept.
 
 ## Process
 As this application's development was largely monitored by Claude, there were quite a bit of both challenges communicating and surprises developing with Claude.
@@ -27,7 +27,7 @@ As this application's development was largely monitored by Claude, there were qu
 ### 1. Code structure was often structured in a way I did not understand
 As my role in this project is to review what Claude has outputted, it was often that the code structure was not immediately clear to myself, and I had to ask Claude to further explain (using /teach), and then iterating on the structure for legibility.
 
-One example was the **initial scaffolding that Claude had done on the backend code structure**. All the service and controller functions were all in one file, and was hard to understand as it became very verbose. I had to make it explicit that I wanted to split it into controllers, routes and services to make it legible for other developers.
+One example was the **initial scaffolding that Claude had done on the back-end code structure**. All the service and controller functions were all in one file, and was hard to understand as it became very verbose. I had to make it explicit that I wanted to split it into controllers, routes and services to make it legible for other developers.
 
 ### 2. Iterating and processing on Design
 Although I had fed Claude proper data and context of the User and Design System, it would often miss the mark on small UI details such as header spacing, and overall consistency of the project, and had to ask it to re-evaluate the design and fix the explicit issue.
@@ -53,12 +53,12 @@ Additionally, I wanted to find the difference between Japanese and Western desig
 1. **Noisy design is not often a concern**: Japanese design tends to be verbose and information dense, as accuracy matters more than speed. This should reflect in the design, to avoid too many icons and visual design and focus on text-based communication.
 
 ## Brainstorm Map
-After understand who I will be designing for this project, I conducted a **brainstorming** session to further ideate on my beliefs on this project.
+After understanding the target demographic, I conducted a **brainstorming** session to further ideate on my beliefs on this project.
 
 <img width="739" height="502" alt="image" src="https://github.com/user-attachments/assets/634a9a5f-10bb-4399-9e90-604c412fa673" />
 
 Several thoughts came out of this brainstorm:
-1. **Resolving Emergencies is the primary focus**: For this project, I was focused on the user, which is the Traffic Operational Staff, however I had a stronger understanding of the impact, which is that the road should become safer with this application.
+1. **Resolving Emergencies is the primary focus**: Initially I was focused on the user, which is the Traffic Operational Staff, however I had a stronger understanding of the impact of the final end user, which is that the road should becomes safer for civilians with deployment of this application.
 2. **Work Environment is primary desktop**: As their job is done on a desktop, my primary focus should be on the desktop experience, and not the mobile experience, which is different as commonly mobile first design is priority.
 3. **Communication between environments**: Operational staff must communicate quickly, and be alert if something occurs on previous incidents as well.
 4. **Accessibility for Night shifts**: 24/7 shifts include night shifts, so a thought came to mind to implement dark/light mode for preference as it could strain their eyes after operation of long hours.
@@ -78,7 +78,7 @@ For low fidelity prototyping, sketches were created alongside a mood board to it
 <img width="1219" height="734" alt="image" src="https://github.com/user-attachments/assets/0bae3d0b-7e4a-467f-be4c-7f2c812c2759" />
 
 ## Medium Fidelity
-Once low fidelity prototyping was finalized, Medium Fidelity Prototypes were created to further finalize structure. Note that in this iteration, I kept close notice to not add too much visual clutter and focus on verbosity to keep within the Japanese Design language.
+Once low fidelity prototyping was finalized, medium fidelity prototypes were created to further finalize structure. Note that in this iteration, I kept close notice to not add too much visual clutter and focus on verbosity to keep within the Japanese Design language.
 
 <img width="766" height="583" alt="image" src="https://github.com/user-attachments/assets/4af31833-cdd4-44f3-a008-d34e70cfa7cc" />
 
@@ -96,7 +96,7 @@ For this project, due to a restricted timeline I delegated the high fidelity pro
 
 ## Post-Implementation
 Once it was finalized, further iterations were conducted. There were a few pain points I had not considered in my initial brief:
-1. **Dashboard was cluttered with unnecessary information**: Stat blocks, while nice, because the design was verbose and took too much away from the alerts and what the user was assigned to or not.
+1. **Dashboard was cluttered with unnecessary information**: Stat blocks took too much away from the alerts and what the user was assigned to or not.
 2. **Unresolved and Unassigned cases took too much of the screen**: An initial draft from the AI included Tab design. At the time, I did not want to use tabs as the user may not understand how to use it as its modern design language, and hides too much data. However, the page was too long and hard to notice new alerts or see their assigned tasks as it was hidden below the fold.
 
 With the above changes in mind, multiple iterations were made, and into the final product: 
