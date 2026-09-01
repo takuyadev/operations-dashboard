@@ -1,9 +1,11 @@
 /**
  * Theme handling for the Mimamori token layer.
  *
- * The design system is dark-first: a bare `:root` carries the dark tokens and
- * `[data-theme="light"]` overrides them (tokens/colors.css). A toggle only has
- * to set `data-theme` on <html> and remember the choice.
+ * The token layer is dark-first (a bare `:root` carries the dark tokens and
+ * `[data-theme="light"]` overrides them, tokens/colors.css), but this app
+ * defaults to light: <html> always gets an explicit `data-theme`, so the
+ * default just decides which value that is. A toggle sets `data-theme` on
+ * <html> and remembers the choice.
  *
  * The choice is stored in a cookie (not localStorage) so the server can render
  * the correct `data-theme` on the first response — no flash of the wrong theme,
@@ -12,8 +14,8 @@
 
 export type Theme = "light" | "dark";
 
-/** Used when nothing is stored — matches the design system's default. */
-export const DEFAULT_THEME: Theme = "dark";
+/** Used when no theme cookie is set. */
+export const DEFAULT_THEME: Theme = "light";
 
 export const THEME_COOKIE = "ops-theme";
 const ONE_YEAR = 60 * 60 * 24 * 365;
